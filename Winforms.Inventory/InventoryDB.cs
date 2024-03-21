@@ -9,7 +9,7 @@ namespace Winforms.Inventory
 {
     public static class InventoryDB
     {
-        private static readonly string Path = @"C:\Users\GVARA\Desktop\Humber-Semest-2\Application-Dev-using-C#.NET-ITE-5230-IRA\Winforms.Inventory\grocery_inventory_items.txt";
+        private static readonly string Path = @"C:\Users\GVARA\Desktop\Humber-Semest-2\Application-Dev-using-C#.NET-ITE-5230-IRA\Winforms.Inventory_Vladimir_Gvaramadze\grocery_inventory_items.txt";
         private const string Delimiter = "|";
 
         public static List<InventoryItem> GetItems()
@@ -62,7 +62,7 @@ namespace Winforms.Inventory
 
         public override string ToString()
         {
-            return $"{ItemNo} - {Description} - {Price:C}";
+            return $"{ItemNo} | {Description} | {Price:C}";
         }
     }
 }
