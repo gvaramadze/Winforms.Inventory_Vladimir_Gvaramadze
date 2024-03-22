@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+// Vladimir Gvaramadze N01636204
 namespace Winforms.Inventory
 {
     public partial class Form1 : Form
@@ -41,8 +42,15 @@ namespace Winforms.Inventory
                 InventoryItem selectedItem = (InventoryItem)lstBox.SelectedItem;
                 if (MessageBox.Show($"Are you sure you want to delete {selectedItem}?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
-                    InventoryDB.SaveItems(InventoryDB.GetItems().Where(item => item.ItemNo != selectedItem.ItemNo).ToList());
-                    lstBox.DataSource = InventoryDB.GetItems();
+                    try
+                    {
+                        InventoryDB.SaveItems(InventoryDB.GetItems().Where(item => item.ItemNo != selectedItem.ItemNo).ToList());
+                        lstBox.DataSource = InventoryDB.GetItems();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

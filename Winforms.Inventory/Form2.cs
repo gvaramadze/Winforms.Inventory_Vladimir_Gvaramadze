@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+// Vladimir Gvaramadze N01636204
 namespace Winforms.Inventory
 {
     public partial class Form2 : Form
@@ -49,19 +50,26 @@ namespace Winforms.Inventory
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            InventoryItem newItem = new InventoryItem
+            try
             {
-                ItemNo = Convert.ToInt32(txtItem.Text),
-                Description = txtDescription.Text,
-                Price = Convert.ToDecimal(txtPrice.Text)
-            };
+                InventoryItem newItem = new InventoryItem
+                {
+                    ItemNo = ParseInt(txtItem.Text, "ItemNo"),
+                    Description = txtDescription.Text,
+                    Price = ParseDecimal(txtPrice.Text, "Price")
+                };
 
-            List<InventoryItem> existingItems = InventoryDB.GetItems();
+                List<InventoryItem> existingItems = InventoryDB.GetItems();
 
-            existingItems.Add(newItem);
+                existingItems.Add(newItem);
 
-            InventoryDB.SaveItems(existingItems);
-            this.Close();
+                InventoryDB.SaveItems(existingItems);
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -72,6 +80,30 @@ namespace Winforms.Inventory
         private void Form2_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private static int ParseInt(string value, string name)
+        {
+            if (int.TryParse(value, out int result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Invalid value for " + name + ": " + value);
+            }
+        }
+
+        private static decimal ParseDecimal(string value, string name)
+        {
+            if (decimal.TryParse(value, out decimal result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Invalid value for " + name + ": " + value);
+            }
         }
     }
 }

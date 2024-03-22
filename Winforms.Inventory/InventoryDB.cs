@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// Vladimir Gvaramadze N01636204
 namespace Winforms.Inventory
 {
     public static class InventoryDB
@@ -15,41 +16,77 @@ namespace Winforms.Inventory
         public static List<InventoryItem> GetItems()
         {
             List<InventoryItem> items = new List<InventoryItem>();
-
-            using (StreamReader textIn = new StreamReader(new FileStream(Path, FileMode.OpenOrCreate, FileAccess.Read)))
+            try
             {
-                string row;
-                while ((row = textIn.ReadLine()) != null)
+                using (StreamReader textIn = new StreamReader(new FileStream(Path, FileMode.OpenOrCreate, FileAccess.Read)))
                 {
-                    string[] columns = row.Split('|');
-
-
-                    if (columns.Length == 3)
+                    string row;
+                    while ((row = textIn.ReadLine()) != null)
                     {
-                        InventoryItem item = new InventoryItem
+                        string[] columns = row.Split('|');
+
+
+                        if (columns.Length == 3)
                         {
-                            ItemNo = Convert.ToInt32(columns[0]),
-                            Description = columns[1],
-                            Price = Convert.ToDecimal(columns[2])
-                        };
-                        items.Add(item);
+                            InventoryItem item = new InventoryItem
+                            {
+                                ItemNo = ParseInt(columns[0], "ItemNo"),
+                                Description = columns[1],
+                                Price = ParseDecimal(columns[2], "Price")
+                            };
+                            items.Add(item);
+                        }
                     }
                 }
             }
-            return items;
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error reading from file: " + ex.Message);
+            }
+                return items;
         }
 
+        private static int ParseInt(string value, string name)
+        {
+            if (int.TryParse(value, out int result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Invalid value for " + name + ": " + value);
+            }
+        }
+
+        private static decimal ParseDecimal(string value, string name)
+        {
+            if (decimal.TryParse(value, out decimal result))
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Invalid value for " + name + ": " + value);
+            }
+        }
 
         public static void SaveItems(List<InventoryItem> items)
         {
-            using (StreamWriter textOut = new StreamWriter(new FileStream(Path, FileMode.Create, FileAccess.Write)))
+            try
             {
-                foreach (InventoryItem item in items)
+                using (StreamWriter textOut = new StreamWriter(new FileStream(Path, FileMode.Create, FileAccess.Write)))
                 {
-                    textOut.Write(item.ItemNo + Delimiter);
-                    textOut.Write(item.Description + Delimiter);
-                    textOut.WriteLine(item.Price);
+                    foreach (InventoryItem item in items)
+                    {
+                        textOut.Write(item.ItemNo + Delimiter);
+                        textOut.Write(item.Description + Delimiter);
+                        textOut.WriteLine(item.Price);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error writing to file: " + ex.Message);
             }
         }
     }
